@@ -15,3 +15,30 @@
  */
 
 package com.example.android.devbyteviewer.database
+
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+
+@Database(entities = [DatabaseVideo::class], version = 1)
+abstract class VideoDatabase : RoomDatabase() {
+    abstract val videoDao: VideoDao
+}
+
+private var INSTANCE: VideoDatabase? = null
+
+fun getDatabase(context: Context): VideoDatabase {
+    return INSTANCE ?: synchronized(VideoDatabase::class.java) {
+        val instance: VideoDatabase =
+            Room.databaseBuilder(
+                context.applicationContext,
+                VideoDatabase::class.java,
+                "videos"
+            ).build()
+
+        INSTANCE = instance
+
+        return INSTANCE as VideoDatabase
+    }
+}
